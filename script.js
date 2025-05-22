@@ -1,150 +1,122 @@
-class Calculator {
-  constructor(previousOperandTextElement, currentOperandTextElement) {
-    this.previousOperandTextElement = previousOperandTextElement
-    this.currentOperandTextElement = currentOperandTextElement
-    this.clear()
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(145deg, #c4a3ad, #d9e4ff1c);
+  font-family: 'Nunito', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 80px);
+  grid-template-rows: minmax(100px, auto) repeat(5, 80px);
+  gap: 15px;
+  background: #f8e8ff;
+  padding: 30px;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.output {
+  grid-column: 1 / -1;
+  background-color: #fffafc;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 10px;
+  font-size: 2.5rem;
+  border-radius: 20px;
+  color: #444;
+  box-shadow: inset 0 0 10px #ddd;
+  font-weight: 800;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.previous-operation, .current-operation {
+  width: 100%;
+  font-size: 1.2rem;
+  text-align: right;
+  color: #aaa;
+}
+
+.current-operation {
+  color: #333;
+  font-size: 2.2rem;
+}
+
+.btn {
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.btn:hover {
+  transform: scale(1.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
+    
+}
+
+.span-2 {
+  grid-column: span 2;
+  border-radius: 20px;
+  
+}
+
+
+/* Colour Classes */
+.pink    { background: #ffdaf4; }
+.yellow  { background: #fff6a4; }
+.green   { background: #ccf3c0; }
+.orange  { background: #ffb287; }
+.red     { background: #ff7878; }
+.purple  { background: #dabaff; }
+.blue    { background: #aeeeff; }
+
+/* Media Queries for Smaller Screens */
+@media (max-width: 768px) {
+  .calculator-grid {
+    grid-template-columns: repeat(4, 1fr); /* Keep 4 columns but adjust size */
+    gap: 0.5rem; /* Reduce gap */
+    padding: 1rem; /* Reduce padding */
   }
 
-  clear() {
-    this.currentOperand = ''
-    this.previousOperand = ''
-    this.operation = undefined
+  .output {
+    font-size: 1.5rem; /* Reduce font size */
+    padding: 0.5rem;
   }
 
-  delete() {
-    this.currentOperand = this.currentOperand.toString().slice(0, -1)
-  }
-
-  appendNumber(number) {
-    if (number === '.' && this.currentOperand.includes('.')) return
-    this.currentOperand = this.currentOperand.toString() + number.toString()
-  }
-
-  chooseOperation(operation) {
-    if (this.currentOperand === '') return
-    if (this.previousOperand !== '') this.compute()
-    this.operation = operation
-    this.previousOperand = this.currentOperand
-    this.currentOperand = ''
-  }
-
-  compute() {
-    let computation
-    const prev = parseFloat(this.previousOperand)
-    const current = parseFloat(this.currentOperand)
-    if (isNaN(prev) || isNaN(current)) return
-
-    switch (this.operation) {
-      case '+':
-        computation = prev + current
-        break
-      case '-':
-        computation = prev - current
-        break
-      case 'x':  
-      case '*':
-        computation = prev * current
-        break
-      case '÷':
-        computation = prev / current
-        break
-      default:
-        return
-    }
-    this.currentOperand = computation
-    this.operation = undefined
-    this.previousOperand = ''
-  }
-
-  getDisplayNumber(number) {
-    const stringNumber = number.toString()
-    const integerDigits = parseFloat(stringNumber.split('.')[0])
-    const decimalDigits = stringNumber.split('.')[1]
-    let integerDisplay = isNaN(integerDigits)
-      ? ''
-      : integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
-
-    return decimalDigits != null ? `${integerDisplay}.${decimalDigits}` : integerDisplay
-  }
-
-  updateDisplay() {
-    this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand)
-    this.previousOperandTextElement.innerText =
-      this.operation != null
-        ? `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
-        : ''
+  .btn {
+    font-size: 1rem; /* Reduce button font size */
   }
 }
 
-// ----------------------- DOM & Audio -----------------------
+/* Media Queries for Larger Screens */
+@media (min-width: 769px) {
+  .calculator-grid {
+    grid-template-columns: repeat(4, 80px); /* Keep original size */
+    gap: 1rem; /* Increase gap */
+    padding: 2rem; /* Increase padding */
+  }
 
-const numberButtons = document.querySelectorAll('[data-number]')
-const operatorButtons = document.querySelectorAll('[data-operator]')
-const equalsButton = document.querySelector('[data-equals]')
-const clearButton = document.querySelector('[data-clear]')
-const deleteButton = document.querySelector('[data-delete]')
-const previousOperandTextElement = document.querySelector('[data-previous]')
-const currentOperandTextElement = document.querySelector('[data-current]')
+  .output {
+    font-size: 2.5rem; /* Increase font size */
+    padding: 1rem;
+  }
 
-const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement)
-
-const hoverSound = new Audio('Assets/Sound/hover.wav')
-const clickSound = new Audio('click.mp3')
-const equalSound = new Audio('Assets/Sound/equal.wav')
-
-hoverSound.volume = 0.5
-clickSound.volume = 0.3
-equalSound.volume = 0.5
-
-function playHoverSound() {
-  hoverSound.currentTime = 0
-  hoverSound.play()
+  .btn {
+    font-size: 1.5rem; /* Increase button font size */
+  }
 }
-
-// -------------------- Event Listeners ---------------------
-
-numberButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    calculator.appendNumber(button.innerText)
-    calculator.updateDisplay()
-    clickSound.currentTime = 0
-    clickSound.play()
-  })
-
-  button.addEventListener('mouseenter', playHoverSound)
-})
-
-operatorButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    calculator.chooseOperation(button.innerText)
-    calculator.updateDisplay()
-    clickSound.currentTime = 0
-    clickSound.play()
-  })
-
-  button.addEventListener('mouseenter', playHoverSound)
-})
-
-equalsButton.addEventListener('click', () => {
-  calculator.compute()
-  calculator.updateDisplay()
-  equalSound.currentTime = 0
-  equalSound.play()
-})
-equalsButton.addEventListener('mouseenter', playHoverSound)
-
-clearButton.addEventListener('click', () => {
-  calculator.clear()
-  calculator.updateDisplay()
-  clickSound.currentTime = 0
-  clickSound.play()
-})
-clearButton.addEventListener('mouseenter', playHoverSound)
-
-deleteButton.addEventListener('click', () => {
-  calculator.delete()
-  calculator.updateDisplay()
-  clickSound.currentTime = 0
-  clickSound.play()
-})
-deleteButton.addEventListener('mouseenter', playHoverSound)
+/* Dark Mode */
