@@ -52,12 +52,9 @@ body {
 }
 
 .btn {
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  height: auto;
   font-size: 1.5rem;
   border: none;
-  border-radius: 20px; /* Make it rounded-cute, not full circle */
+  border-radius: 50%;
   cursor: pointer;
   transition: 0.2s;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
